@@ -1,0 +1,6 @@
+build/
+.vscode/
+.cache/
+*.user
+*.autosave
+compile_commands.json
