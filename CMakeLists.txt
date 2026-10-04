@@ -34,8 +34,10 @@ add_executable(PasswordManager
     src/VaultCrypto.cpp
     src/UnlockDialog.cpp
     src/CreateVaultDialog.cpp
+    src/AppConfig.cpp
     include/MainWindow.h
     include/EntryDialog.h
+    include/AppConfig.h
     include/VaultMetadata.h
     include/VaultVerifier.h
     include/Vault.h
@@ -187,8 +189,28 @@ target_link_libraries(VaultDatabaseTests
         libsodium::libsodium
 )
 
+
+add_executable(AppConfigTest
+    tests/AppConfigTest.cpp
+    src/AppConfig.cpp
+    src/MasterKey.cpp
+)
+
+target_include_directories(AppConfigTest
+    PRIVATE
+        include
+)
+
+target_link_libraries(AppConfigTest
+    PRIVATE
+        GTest::gtest_main
+        libsodium::libsodium
+        Qt6::Widgets
+)
+
 include(GoogleTest)
 
+gtest_discover_tests(AppConfigTest)
 gtest_discover_tests(VaultMetadataTest)
 gtest_discover_tests(VaultDatabaseTests)
 gtest_discover_tests(MasterKeyTests)

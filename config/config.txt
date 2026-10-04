@@ -1,0 +1,2 @@
+[Database]
+path=/home/awhelan/cplus/pw-manager/PasswordManager/passwords.db

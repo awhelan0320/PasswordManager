@@ -15,10 +15,11 @@
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
+#include "AppConfig.h"
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
-    sqlite_{"passwords.db"},
+    sqlite_{AppConfig::getInstance().getDatabasePath().toStdString()},
     vault_{sqlite_},
     database_{sqlite_, vault_}
 {
