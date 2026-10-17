@@ -20,7 +20,7 @@ conan install ../ -c tools.build:jobs=4 --output-folder=../build --build=missing
 cd ../build
 cmake ../ -DCMAKE_TOOLCHAIN_FILE=conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release
 make -j
-cp ./PasswordManager ../bin
+cp ./PasswordManager ../bin/PasswordManager
 # cd ../
 # rm -rf ./build
 # rm -rf ../venv
