@@ -15,7 +15,10 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 find_package(GTest REQUIRED)
-find_package(Qt6 REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS 
+   Widgets
+   Network
+   NetworkAuth)
 find_package(SQLite3 REQUIRED)
 find_package(libsodium REQUIRED)
 
@@ -35,6 +38,9 @@ add_executable(PasswordManager
     src/UnlockDialog.cpp
     src/CreateVaultDialog.cpp
     src/AppConfig.cpp
+    src/PkceHelper.cpp
+    src/OAuthManager.cpp
+     src/GoogleTokenClient.cpp
     include/MainWindow.h
     include/EntryDialog.h
     include/AppConfig.h
@@ -45,6 +51,9 @@ add_executable(PasswordManager
     include/VaultCrypto.h
     include/UnlockDialog.h
     include/CreateVaultDialog.h
+    include/PkceHelper.h
+    include/OAuthManager.h
+    include/GoogleTokenClient.h
 )
 
 target_include_directories(PasswordManager
@@ -56,6 +65,8 @@ target_link_libraries(PasswordManager
     PRIVATE
         SQLite::SQLite3
         Qt6::Widgets
+        Qt6::Network
+        Qt6::NetworkAuth
         libsodium::libsodium
 )
 
@@ -208,9 +219,33 @@ target_link_libraries(AppConfigTest
         Qt6::Widgets
 )
 
+# target_sources(PkceHelperTests PRIVATE
+#     tests/PkceHelperTests.cpp
+#     src/PkceHelper.cpp
+#     include/PkceHelper.h
+# )
+
+add_executable(PkceHelperTests
+    tests/PkceHelperTests.cpp
+    src/PkceHelper.cpp
+    include/PkceHelper.h
+)
+
+target_include_directories(PkceHelperTests
+    PRIVATE
+        include
+)
+
+target_link_libraries(PkceHelperTests
+    PRIVATE
+        GTest::gtest_main
+        Qt6::NetworkAuth
+)
+
 include(GoogleTest)
 
 gtest_discover_tests(AppConfigTest)
 gtest_discover_tests(VaultMetadataTest)
+gtest_discover_tests(PkceHelperTests)
 gtest_discover_tests(VaultDatabaseTests)
 gtest_discover_tests(MasterKeyTests)

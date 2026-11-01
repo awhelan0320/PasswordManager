@@ -1,0 +1,1 @@
+export PASSWORDMANAGER_CONFIG="/home/awhelan/cplus/pw-manager/PasswordManager/config/PasswordManager.conf"

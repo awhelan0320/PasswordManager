@@ -16,6 +16,7 @@
 #include <QMenu>
 #include <QMenuBar>
 #include "AppConfig.h"
+#include <iostream>
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
@@ -47,6 +48,61 @@ MainWindow::MainWindow(QWidget* parent)
     updateVaultActions();
 
     refreshTable();
+
+connect(&oauthManager_,
+        &OAuthManager::authorizationFailed,
+        this,
+        [](const QString& message)
+        {
+            qWarning() << "Google authorization failed:" << message;
+        });
+
+// connect(&oauthManager_,
+//         &OAuthManager::authorizationCodeReceived,
+//         this,
+//         [](const QString&, const QString&, const QString&)
+//         {
+//             qInfo() << "Google authorization callback received.";
+//         });
+                  
+connect(&oauthManager_,
+        &OAuthManager::authorizationCodeReceived,
+        this,
+        [this](const QString& code,
+               const QString& redirectUri,
+               const QString& verifier)
+        {
+            tokenClient_.exchangeAuthorizationCode(
+                AppConfig::getInstance().getGoogleOAuthClientId(),
+                AppConfig::getInstance().getGoogleOAuthClientSecret(),
+                code,
+                redirectUri,
+                verifier);
+        });
+connect(&tokenClient_,
+        &GoogleTokenClient::tokenReceived,
+        this,
+        [](const OAuthToken& token)
+        {
+            qInfo() << "Google token exchange successful.";
+            qInfo() << "Access token received:"
+                    << !token.accessToken.isEmpty();
+            qInfo() << "Refresh token received:"
+                    << !token.refreshToken.isEmpty();
+            qInfo() << "Token expires:"
+                    << token.expiresAt;
+        });
+
+connect(&tokenClient_,
+        &GoogleTokenClient::tokenExchangeFailed,
+        this,
+        [](const QString& message)
+        {
+            qWarning() << "Google token exchange failed:"
+                       << message;
+        });
+
+oauthManager_.startAuthorization(AppConfig::getInstance().getGoogleOAuthClientId());        
 }
 
 void MainWindow::setupUi()
@@ -152,7 +208,7 @@ void MainWindow::addEntry()
 
         return;
     }
-
+    // std::cout << "Google OAuth Client ID: " << AppConfig::getInstance().getGoogleOAuthClientId().toStdString() << std::endl;
     refreshTable();
 }
 

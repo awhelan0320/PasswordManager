@@ -4,6 +4,8 @@
 
 #include "VaultDatabase.h"
 #include "Vault.h"
+#include "OAuthManager.h"
+#include "GoogleTokenClient.h"
 
 class QTableWidget;
 class QAction;
@@ -29,7 +31,8 @@ private:
     Vault vault_;
     VaultDatabase database_;
     QTableWidget* table_;
-
+    OAuthManager oauthManager_;
+    GoogleTokenClient tokenClient_;
     void updateVaultActions();
     QAction* lockVaultAction_;
     QAction* addEntryAction_;

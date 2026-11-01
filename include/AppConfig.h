@@ -1,3 +1,4 @@
+
 #pragma once
 
 #include <QString>
@@ -5,14 +6,19 @@
 class AppConfig
 {
 public:
-    explicit AppConfig(
-        const QString& configFile = "db/PasswordManager.conf");
-
     static AppConfig& getInstance();
 
-    const QString& getDatabasePath() const;
+    QString getDatabasePath() const;
     void setDatabasePath(const QString& path);
 
+    QString getGoogleOAuthClientId() const;
+    void setGoogleOAuthClientId(const QString& clientId);
+
+    QString getConfigFilePath() const;
+    QString getGoogleOAuthClientSecret() const;
+
 private:
-    QString databasePath_;
+    AppConfig();
+
+    QString configFilePath_;
 };

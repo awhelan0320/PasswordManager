@@ -11,3 +11,4 @@ CMakeToolchain
 [options]
 gtest/*:shared=False
 qt/*:shared=True
+qt/*:qtnetworkauth=True

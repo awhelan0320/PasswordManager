@@ -12,6 +12,9 @@ int main(int argc, char* argv[])
 
     QApplication app(argc, argv);
 
+    QCoreApplication::setOrganizationName("PasswordManager");
+    QCoreApplication::setApplicationName("PasswordManager");
+
     MainWindow window;
     window.show();
 
