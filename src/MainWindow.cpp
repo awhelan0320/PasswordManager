@@ -79,18 +79,42 @@ connect(&oauthManager_,
                 redirectUri,
                 verifier);
         });
+
+// connect(&tokenClient_,
+//         &GoogleTokenClient::tokenReceived,
+//         this,
+//         [](const OAuthToken& token)
+//         {
+//             qInfo() << "Google token exchange successful.";
+//             qInfo() << "Access token received:"
+//                     << !token.accessToken.isEmpty();
+//             qInfo() << "Refresh token received:"
+//                     << !token.refreshToken.isEmpty();
+//             qInfo() << "Token expires:"
+//                     << token.expiresAt;
+//         });
+
+
 connect(&tokenClient_,
         &GoogleTokenClient::tokenReceived,
         this,
         [](const OAuthToken& token)
         {
-            qInfo() << "Google token exchange successful.";
+            const bool saved =
+                AppConfig::getInstance().saveOAuthTokens(token);
+
+            if (!saved)
+            {
+                qWarning() << "Failed to save Google OAuth tokens.";
+                return;
+            }
+
+            qInfo() << "Google OAuth tokens saved successfully.";
             qInfo() << "Access token received:"
                     << !token.accessToken.isEmpty();
             qInfo() << "Refresh token received:"
                     << !token.refreshToken.isEmpty();
-            qInfo() << "Token expires:"
-                    << token.expiresAt;
+            qInfo() << "Token expires:" << token.expiresAt;
         });
 
 connect(&tokenClient_,

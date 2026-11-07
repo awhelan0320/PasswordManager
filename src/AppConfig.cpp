@@ -5,7 +5,11 @@
 #include <QDir>
 #include <QSettings>
 #include <QStandardPaths>
+#include <QFileInfo>
 #include <iostream>
+#include "GoogleTokenClient.h"
+
+#include <QSettings>
 
 namespace
 {
@@ -31,6 +35,17 @@ AppConfig::AppConfig()
     : configFilePath_{determineConfigFilePath()}
 {
     std::cout << "Config file path: " << configFilePath_.toStdString() << std::endl;
+}
+
+AppConfig::AppConfig(const QString& configFilePath)
+    : configFilePath_(configFilePath)
+{
+    std::cout << "Config file path: " << configFilePath_.toStdString() << std::endl;
+    std::cout << "Config file exists: "
+          << std::boolalpha
+          << QFileInfo::exists(configFilePath_)
+          << std::endl;    
+    std::cout << "Absolute path: " << QFileInfo(configFilePath_).absoluteFilePath().toStdString() << std::endl;
 }
 
 AppConfig& AppConfig::getInstance()
@@ -115,4 +130,88 @@ QString AppConfig::getGoogleOAuthClientSecret() const
     qDebug() << "Client secret found:" << !secret.isEmpty();
 
     return secret;
+}
+
+bool AppConfig::saveOAuthTokens(const OAuthToken& token)
+{
+    QSettings settings(configFilePath_, QSettings::IniFormat);
+
+    settings.setValue(
+        "GoogleOAuth/AccessToken",
+        token.accessToken);
+
+    // Google may omit the refresh token on subsequent authorizations.
+    // Preserve an existing refresh token in that situation.
+    if (!token.refreshToken.isEmpty())
+    {
+        settings.setValue(
+            "GoogleOAuth/RefreshToken",
+            token.refreshToken);
+    }
+
+    settings.setValue(
+        "GoogleOAuth/TokenType",
+        token.tokenType);
+
+    if (!token.scope.isEmpty())
+    {
+        settings.setValue(
+            "GoogleOAuth/Scope",
+            token.scope);
+    }
+
+    settings.setValue(
+        "GoogleOAuth/ExpiresAt",
+        token.expiresAt.toUTC().toString(Qt::ISODateWithMs));
+
+    settings.sync();
+
+    return settings.status() == QSettings::NoError;
+}
+
+QString AppConfig::getAccessToken() const
+{
+    QSettings settings(configFilePath_, QSettings::IniFormat);
+    return settings.value("GoogleOAuth/AccessToken").toString();
+}
+
+QString AppConfig::getRefreshToken() const
+{
+    QSettings settings(configFilePath_, QSettings::IniFormat);
+    return settings.value("GoogleOAuth/RefreshToken").toString();
+}
+
+QString AppConfig::getTokenType() const
+{
+    QSettings settings(configFilePath_, QSettings::IniFormat);
+    return settings.value("GoogleOAuth/TokenType").toString();
+}
+
+QString AppConfig::getOAuthScope() const
+{
+    QSettings settings(configFilePath_, QSettings::IniFormat);
+    return settings.value("GoogleOAuth/Scope").toString();
+}
+
+QDateTime AppConfig::getTokenExpiration() const
+{
+    QSettings settings(configFilePath_, QSettings::IniFormat);
+
+    const QString value =
+        settings.value("GoogleOAuth/ExpiresAt").toString();
+
+    return QDateTime::fromString(value, Qt::ISODateWithMs).toUTC();
+}
+
+bool AppConfig::isAccessTokenExpired(int bufferSeconds) const
+{
+    const QDateTime expiration = getTokenExpiration();
+
+    if (!expiration.isValid())
+    {
+        return true;
+    }
+
+    return QDateTime::currentDateTimeUtc().addSecs(bufferSeconds)
+           >= expiration;
 }

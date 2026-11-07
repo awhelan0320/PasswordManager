@@ -205,6 +205,8 @@ add_executable(AppConfigTest
     tests/AppConfigTest.cpp
     src/AppConfig.cpp
     src/MasterKey.cpp
+    src/GoogleTokenClient.cpp
+    include/GoogleTokenClient.h
 )
 
 target_include_directories(AppConfigTest
@@ -217,13 +219,31 @@ target_link_libraries(AppConfigTest
         GTest::gtest_main
         libsodium::libsodium
         Qt6::Widgets
+        Qt6::Core
+        Qt6::Network
 )
 
-# target_sources(PkceHelperTests PRIVATE
-#     tests/PkceHelperTests.cpp
-#     src/PkceHelper.cpp
-#     include/PkceHelper.h
-# )
+add_executable(GoogleTests
+    tests/GoogleTokenClientTests.cpp
+    src/GoogleTokenClient.cpp
+    include/GoogleTokenClient.h
+)
+
+
+
+target_include_directories(GoogleTests
+    PRIVATE
+        include
+)
+
+target_link_libraries(GoogleTests
+    PRIVATE
+        GTest::gtest_main
+        libsodium::libsodium
+        Qt6::Widgets
+        Qt6::Core
+        Qt6::Network
+)
 
 add_executable(PkceHelperTests
     tests/PkceHelperTests.cpp
