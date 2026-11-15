@@ -25,6 +25,7 @@ public:
 
     void setGoogleOAuthClientId(const QString& clientId);    
     bool saveOAuthTokens(const OAuthToken& token);
+    void clearOAuthTokens();
     QString getAccessToken() const;
     QString getRefreshToken() const;
     QString getTokenType() const;

@@ -7,6 +7,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QDebug>
 
 UnlockDialog::UnlockDialog(
     Vault& vault,
@@ -46,19 +47,29 @@ UnlockDialog::UnlockDialog(
     layout->addWidget(errorLabel_);
     layout->addLayout(buttonLayout);
 
-    connect(
-        unlockButton_,
-        &QPushButton::clicked,
-        this,
-        &UnlockDialog::handleUnlock
-    );
+    // connect(
+    //     unlockButton_,
+    //     &QPushButton::clicked,
+    //     this,
+    //     &UnlockDialog::handleUnlock
+    // );
 
-    connect(
-        cancelButton_,
-        &QPushButton::clicked,
-        this,
-        &UnlockDialog::handleCancel
-    );
+    // connect(
+    //     cancelButton_,
+    //     &QPushButton::clicked,
+    //     this,
+    //     &UnlockDialog::handleCancel
+    // );
+
+    connect(unlockButton_, &QPushButton::clicked, this, [this]() {
+        qDebug() << "Unlock button clicked";
+        handleUnlock();
+    });
+
+    connect(cancelButton_, &QPushButton::clicked, this, [this]() {
+        qDebug() << "Cancel button clicked";
+        handleCancel();
+    });
 
     connect(
         passwordEdit_,
@@ -77,6 +88,7 @@ QString UnlockDialog::password() const
 
 void UnlockDialog::handleUnlock()
 {
+    qDebug() << "Unlock button clicked";
     const QString enteredPassword = passwordEdit_->text();
 
     if (enteredPassword.isEmpty())

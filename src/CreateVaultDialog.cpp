@@ -81,6 +81,7 @@ CreateVaultDialog::CreateVaultDialog(
 
 void CreateVaultDialog::handleCreate()
 {
+    qDebug() << "Create Vault button handler entered";
     const QString password = passwordEdit_->text();
     const QString confirmation = confirmationEdit_->text();
 
@@ -100,10 +101,12 @@ void CreateVaultDialog::handleCreate()
         confirmationEdit_->setFocus();
         return;
     }
-
+    
+    qDebug() << "Before vault_.create() call";
     vault_.create(password.toStdString());
-
+    qDebug() << "Vault created successfully.";
     accept();
+    qDebug() << "Create Vault dialog accepted.";
 }
 
 void CreateVaultDialog::handleCancel()

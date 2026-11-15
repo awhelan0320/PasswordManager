@@ -215,3 +215,22 @@ bool AppConfig::isAccessTokenExpired(int bufferSeconds) const
     return QDateTime::currentDateTimeUtc().addSecs(bufferSeconds)
            >= expiration;
 }
+
+void AppConfig::clearOAuthTokens()
+{
+    QSettings settings;
+
+    settings.beginGroup("GoogleOAuth");
+
+    settings.remove("AccessToken");
+    settings.remove("RefreshToken");
+    settings.remove("TokenType");
+    settings.remove("ExpiresAt");
+    settings.remove("Scope");
+
+    settings.endGroup();
+
+    settings.sync();
+
+    qInfo() << "Stored Google OAuth tokens cleared.";
+}

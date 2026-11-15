@@ -36,6 +36,9 @@ void GoogleTokenClient::exchangeAuthorizationCode(
     const QString& codeVerifier)
 {
 
+qInfo() << "Starting Google authorization-code exchange.";
+
+
 if (clientId.isEmpty() ||
     clientSecret.isEmpty() ||
     code.isEmpty() ||
@@ -81,10 +84,22 @@ if (clientId.isEmpty() ||
     QNetworkReply* reply =
         networkManager_.post(request, postData);
 
+
     connect(reply, &QNetworkReply::finished,
             this, [this, reply]()
     {
+
         const QByteArray responseData = reply->readAll();
+
+        qWarning() << "HTTP status:"
+                << reply->attribute(
+                        QNetworkRequest::HttpStatusCodeAttribute);
+
+        qWarning() << "Google OAuth response:"
+                << responseData;
+
+        qWarning() << "Network error:"
+                << reply->errorString();
 
         const auto networkError = reply->error();
         const QString networkErrorText = reply->errorString();
@@ -96,9 +111,11 @@ if (clientId.isEmpty() ||
         const QJsonDocument document =
             QJsonDocument::fromJson(responseData, &parseError);
 
+            
         if (parseError.error != QJsonParseError::NoError ||
             !document.isObject())
         {
+      
             emit tokenExchangeFailed(
                 networkError == QNetworkReply::NoError
                     ? "Google returned an invalid token response."
@@ -158,6 +175,7 @@ void GoogleTokenClient::refreshAccessToken(
     const QString& clientSecret,
     const QString& refreshToken)
 {
+    qInfo() << "Starting Google refresh-token request.";
     if (clientId.isEmpty() ||
         clientSecret.isEmpty() ||
         refreshToken.isEmpty())
@@ -192,9 +210,21 @@ void GoogleTokenClient::refreshAccessToken(
         networkManager_.post(request, postData);
 
     connect(reply, &QNetworkReply::finished,
-            this, [this, reply]()
+            this, [this, reply, refreshToken]()
     {
         const QByteArray responseData = reply->readAll();
+
+        qWarning() << "HTTP status:"
+                << reply->attribute(
+                        QNetworkRequest::HttpStatusCodeAttribute);
+
+        qWarning() << "Google OAuth response:"
+                << responseData;
+
+        qWarning() << "Network error:"
+                << reply->errorString();
+
+
 
         const auto networkError = reply->error();
         const QString networkErrorText = reply->errorString();
@@ -240,6 +270,11 @@ void GoogleTokenClient::refreshAccessToken(
         // Google normally does not return a new refresh token here.
         token.refreshToken =
             json.value("refresh_token").toString();
+
+        if (token.refreshToken.isEmpty())
+        {
+            token.refreshToken = refreshToken;
+        }
 
         token.tokenType =
             json.value("token_type").toString();

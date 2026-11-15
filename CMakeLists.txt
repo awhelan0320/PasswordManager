@@ -40,7 +40,8 @@ add_executable(PasswordManager
     src/AppConfig.cpp
     src/PkceHelper.cpp
     src/OAuthManager.cpp
-     src/GoogleTokenClient.cpp
+    src/GoogleTokenClient.cpp
+    src/GoogleDriveClient.cpp
     include/MainWindow.h
     include/EntryDialog.h
     include/AppConfig.h
@@ -54,6 +55,7 @@ add_executable(PasswordManager
     include/PkceHelper.h
     include/OAuthManager.h
     include/GoogleTokenClient.h
+    include/GoogleDriveClient.h
 )
 
 target_include_directories(PasswordManager
@@ -269,3 +271,7 @@ gtest_discover_tests(VaultMetadataTest)
 gtest_discover_tests(PkceHelperTests)
 gtest_discover_tests(VaultDatabaseTests)
 gtest_discover_tests(MasterKeyTests)
+gtest_discover_tests(VaultVerifierTest)
+gtest_discover_tests(VaultTest)
+gtest_discover_tests(VaultCryptoTest)
+gtest_discover_tests(GoogleTests)
