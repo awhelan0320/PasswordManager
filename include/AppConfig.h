@@ -34,8 +34,6 @@ public:
     // Retrieves the Google OAuth Client ID from the configuration.
     QString getGoogleOAuthClientId() const;
     // Retrieves the Google OAuth Client Secret from the configuration.
-    QString getConfigFilePath() const;
-    // Retrieves the Google OAuth Client Secret from the configuration.
     QString getGoogleOAuthClientSecret() const;
     
     // Sets the Google OAuth Client ID in the configuration.

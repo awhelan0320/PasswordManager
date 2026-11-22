@@ -7,12 +7,13 @@
 #include <QUrl>
 #include <QUrlQuery>
 
-// GoogleTokenClient::GoogleTokenClient(QObject* parent)
-//     : QObject(parent)
-// {
-// }
-
-
+/**
+ * @brief Constructs a GoogleTokenClient with an optional parent QObject.
+ * @param parent The parent QObject, default is nullptr.
+ *
+ * This constructor initializes the GoogleTokenClient, setting up the necessary
+ * network access manager for handling HTTP requests to Google's OAuth 2.0 token endpoint.
+ */
 GoogleTokenClient::GoogleTokenClient(QObject* parent)
     : GoogleTokenClient(
           QUrl("https://oauth2.googleapis.com/token"),
@@ -20,6 +21,14 @@ GoogleTokenClient::GoogleTokenClient(QObject* parent)
 {
 }
 
+/**
+ * @brief Constructs a GoogleTokenClient with a specified token endpoint and an optional parent QObject.
+ * @param tokenEndpoint The URL of the OAuth 2.0 token endpoint.
+ * @param parent The parent QObject, default is nullptr.
+ *
+ * This constructor initializes the GoogleTokenClient with a custom token endpoint,
+ * allowing for flexibility in testing or using different OAuth 2.0 providers.
+ */
 GoogleTokenClient::GoogleTokenClient(
     const QUrl& tokenEndpoint,
     QObject* parent)
@@ -28,6 +37,20 @@ GoogleTokenClient::GoogleTokenClient(
 {
 }
 
+/**
+ * @brief Exchanges an authorization code for an access token.
+ *
+ * This method sends a POST request to the OAuth 2.0 token endpoint with the provided
+ * client ID, client secret, authorization code, redirect URI, and code verifier.
+ * Upon receiving a response, it parses the JSON to extract the access token, refresh
+ * token, token type, scope, and expiration time. It emits signals for success or failure.
+ *
+ * @param clientId The client ID for the OAuth 2.0 application.
+ * @param clientSecret The client secret for the OAuth 2.0 application.
+ * @param code The authorization code received from the Google OAuth 2.0 server.
+ * @param redirectUri The redirect URI used in the authorization request.
+ * @param codeVerifier The PKCE code verifier for the OAuth 2.0 flow.
+ */
 void GoogleTokenClient::exchangeAuthorizationCode(
     const QString& clientId,
     const QString& clientSecret,
@@ -170,6 +193,18 @@ if (clientId.isEmpty() ||
     });
 }
 
+/**
+ * @brief Refreshes an access token using a refresh token.
+ *
+ * This method sends a POST request to the OAuth 2.0 token endpoint with the provided
+ * client ID, client secret, and refresh token. Upon receiving a response, it parses
+ * the JSON to extract the new access token, refresh token (if provided), token type,
+ * scope, and expiration time. It emits signals for success or failure.
+ *
+ * @param clientId The client ID for the OAuth 2.0 application.
+ * @param clientSecret The client secret for the OAuth 2.0 application.
+ * @param refreshToken The refresh token used to obtain a new access token.
+ */
 void GoogleTokenClient::refreshAccessToken(
     const QString& clientId,
     const QString& clientSecret,

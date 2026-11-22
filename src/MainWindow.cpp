@@ -18,189 +18,13 @@
 #include "AppConfig.h"
 #include <iostream>
 
-// MainWindow::MainWindow(QWidget* parent)
-//     : QMainWindow(parent),
-//     sqlite_{AppConfig::getInstance().getDatabasePath().toStdString()},
-//     vault_{sqlite_},
-//     database_{sqlite_, vault_}
-// {
-//     qDebug() << "MainWindow constructor started";
-//     setupUi();
-
-//     auto* vaultMenu = menuBar()->addMenu("Vault");
-
-//     //auto* lockAction = vaultMenu->addAction("Lock Vault");
-//     lockVaultAction_ = vaultMenu->addAction("Lock Vault");
-    
-//     connect(
-//         //lockAction,
-//         lockVaultAction_,
-//         &QAction::triggered,
-//         this,
-//         &MainWindow::lockVault
-//     );
-//     qDebug() << "About to initialize vault";
-//     if (!initializeVault())
-//     {
-//         QTimer::singleShot(0, this, &QWidget::close);
-//         return;
-//     }
-//     qDebug() << "Vault initialization completed";
-//     updateVaultActions();
-
-//     refreshTable();
-
-//         auto* driveMenu = menuBar()->addMenu("Google Drive");
-
-//         backupDriveAction_ = driveMenu->addAction("Backup to Google Drive");
-
-//         connect(
-//             backupDriveAction_,
-//             &QAction::triggered,
-//             this,
-//             &MainWindow::startGoogleDriveBackup
-//         );
-
-
-
-        
-
-// connect(&oauthManager_,
-//         &OAuthManager::authorizationFailed,
-//         this,
-// [this](const QString& message)
-//         {
-//             qWarning() << "Google authorization failed:" << message;
-
-//             googleAuthInProgress_ = false;
-
-//             if (backupRequested_) {
-//                 backupRequested_ = false;
-
-//                 QMessageBox::critical(
-//                     this,
-//                     "Google Authorization Failed",
-//                     message
-//                 );
-//             }
-//         });
-
-// // connect(&oauthManager_,
-// //         &OAuthManager::authorizationCodeReceived,
-// //         this,
-// //         [](const QString&, const QString&, const QString&)
-// //         {
-// //             qInfo() << "Google authorization callback received.";
-// //         });
-                  
-// connect(&oauthManager_,
-//         &OAuthManager::authorizationCodeReceived,
-//         this,
-//         [this](const QString& code,
-//                const QString& redirectUri,
-//                const QString& verifier)
-//         {
-//             googleAuthInProgress_ = true;
-//             tokenClient_.exchangeAuthorizationCode(
-//                 AppConfig::getInstance().getGoogleOAuthClientId(),
-//                 AppConfig::getInstance().getGoogleOAuthClientSecret(),
-//                 code,
-//                 redirectUri,
-//                 verifier);
-//         });
-
-// // connect(&tokenClient_,
-// //         &GoogleTokenClient::tokenReceived,
-// //         this,
-// //         [](const OAuthToken& token)
-// //         {
-// //             qInfo() << "Google token exchange successful.";
-// //             qInfo() << "Access token received:"
-// //                     << !token.accessToken.isEmpty();
-// //             qInfo() << "Refresh token received:"
-// //                     << !token.refreshToken.isEmpty();
-// //             qInfo() << "Token expires:"
-// //                     << token.expiresAt;
-// //         });
-
-
-//         connect(&tokenClient_,
-//         &GoogleTokenClient::tokenReceived,
-//         this,
-//         [this](const OAuthToken& token)
-//         {
-//             const bool saved =
-//                 AppConfig::getInstance().saveOAuthTokens(token);
-
-//             if (!saved)
-//             {
-//                 qWarning() << "Failed to save Google OAuth tokens.";
-//                 return;
-//             }
-
-//             qInfo() << "Google OAuth tokens saved successfully.";
-//             qInfo() << "Access token received:"
-//                     << !token.accessToken.isEmpty();
-//             qInfo() << "Refresh token received:"
-//                     << !token.refreshToken.isEmpty();
-//             qInfo() << "Token expires:" << token.expiresAt;
-
-//             googleAuthInProgress_ = false;
-
-//             if (backupRequested_) {
-//                 backupRequested_ = false;
-//                 startGoogleDriveBackup();
-//             }            
-//         });
-
-//         connect(
-//             &driveClient_,
-//             &GoogleDriveClient::backupFinished,
-//             this,
-//             [this](bool success, const QString& message)
-//             {
-//                 if (success) {
-//                     QMessageBox::information(
-//                         this,
-//                         "Google Drive Backup",
-//                         message
-//                     );
-//                 } else {
-//                     QMessageBox::critical(
-//                         this,
-//                         "Google Drive Backup Failed",
-//                         message
-//                     );
-//                 }
-//             }
-//         );
-
-//         connect(&tokenClient_,
-//         &GoogleTokenClient::tokenExchangeFailed,
-//         this,
-//         [this](const QString& message)
-//         {
-//             qWarning() << "Google token exchange failed:"
-//                        << message;
-
-//             googleAuthInProgress_ = false;
-
-//             if (backupRequested_) {
-//                 backupRequested_ = false;
-
-//                 QMessageBox::critical(
-//                     this,
-//                     "Google Authorization Failed",
-//                     message
-//                 );
-//             }
-//         });
-
-//         //oauthManager_.startAuthorization(AppConfig::getInstance().getGoogleOAuthClientId());        
-//         ensureValidGoogleToken();
-// }
-
-
+/**
+ * @brief Constructs the MainWindow with an optional parent widget.
+ * @param parent The parent widget, default is nullptr.
+ *
+ * This constructor initializes the main application window, setting up the user
+ * interface elements and connecting signals and slots for user interactions.
+ */
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
       sqlite_{AppConfig::getInstance().getDatabasePath().toStdString()},
@@ -328,29 +152,7 @@ MainWindow::MainWindow(QWidget* parent)
             }
         }
     );
-    // 11/15/2026
-    // connect(
-    //     &tokenClient_,
-    //     &GoogleTokenClient::tokenExchangeFailed,
-    //     this,
-    //     [this](const QString& message)
-    //     {
-    //         qWarning() << "Google token exchange failed:" << message;
-
-    //         googleAuthInProgress_ = false;
-
-    //         if (backupRequested_)
-    //         {
-    //             backupRequested_ = false;
-
-    //             QMessageBox::critical(
-    //                 this,
-    //                 "Google Authorization Failed",
-    //                 message
-    //             );
-    //         }
-    //     }
-    // );
+    
 
 connect(
     &tokenClient_,
@@ -457,7 +259,13 @@ connect(
 }
 
 
-
+/**
+ * @brief Sets up the user interface components of the main window.
+ *
+ * This method initializes the main window's layout, including the table widget
+ * for displaying vault entries and the action buttons for adding, editing, and
+ * deleting entries. It configures the table's appearance and behavior.
+ */
 void MainWindow::setupUi()
 {
     setWindowTitle("Password Manager");
@@ -535,7 +343,13 @@ void MainWindow::setupUi()
     setCentralWidget(centralWidget);
 }
 
-
+/**
+ * @brief Adds a new entry to the vault.
+ *
+ * This method opens an EntryDialog for the user to input details for a new
+ * password entry. If the user accepts the dialog, the entry is added to the
+ * database, and the table is refreshed to display the new entry.
+ */
 void MainWindow::addEntry()
 {
     EntryDialog dialog{this};
@@ -565,6 +379,13 @@ void MainWindow::addEntry()
     refreshTable();
 }
 
+/**
+ * @brief Edits an existing entry in the vault.
+ *
+ * This method opens an EntryDialog for the user to modify details of an existing
+ * password entry. If the user accepts the dialog, the entry is updated in the
+ * database, and the table is refreshed to display the updated entry.
+ */
 void MainWindow::editEntry()
 {
     const int row = table_->currentRow();
@@ -613,6 +434,12 @@ void MainWindow::editEntry()
     refreshTable();
 }
 
+/**
+ * @brief Deletes an existing entry from the vault.
+ *
+ * This method prompts the user to confirm the deletion of a selected password entry.
+ * If confirmed, the entry is removed from the database, and the table is refreshed.
+ */
 void MainWindow::deleteEntry()
 {
     const int row = table_->currentRow();
@@ -659,6 +486,13 @@ void MainWindow::deleteEntry()
     refreshTable();
 }
 
+/**
+ * @brief Refreshes the table to display the current entries in the vault.
+ *
+ * This method retrieves all entries from the database and populates the table
+ * widget with the entry details, including title, username, and URL. It clears
+ * any existing rows before adding the updated entries.
+ */
 void MainWindow::refreshTable()
 {
     const auto entries = database_.getAll();
@@ -706,6 +540,7 @@ void MainWindow::refreshTable()
     }
 }
 
+// Initializes the vault by checking for existing metadata and prompting the user to create or unlock the vault as necessary. Returns true if the vault is successfully unlocked, false otherwise.
 bool MainWindow::initializeVault()
 {
     qDebug() << "initializeVault: entered";
@@ -739,6 +574,13 @@ bool MainWindow::initializeVault()
     return vault_.isUnlocked();
 }
 
+/**
+ * @brief Locks the vault, requiring re-authentication to access entries.
+ *
+ * This method locks the vault and clears the table displaying the entries.
+ * It then prompts the user to unlock the vault again. If the user cancels
+ * the unlock dialog, the application will close.
+ */
 void MainWindow::lockVault()
 {
     vault_.lock();
@@ -760,6 +602,13 @@ void MainWindow::lockVault()
     }
 }
 
+/**
+ * @brief Updates the state of actions based on the current vault and authentication status.
+ *
+ * This method enables or disables actions such as locking the vault, adding entries,
+ * updating entries, deleting entries, and backing up to Google Drive based on whether
+ * the vault is currently unlocked.
+ */
 void MainWindow::updateVaultActions()
 {
     const bool unlocked = vault_.isUnlocked();
@@ -771,6 +620,14 @@ void MainWindow::updateVaultActions()
     backupDriveAction_->setEnabled(unlocked);
 }
 
+/**
+ * @brief Ensures that a valid Google OAuth access token is available.
+ *
+ * This method checks if a refresh token is stored in the configuration. If not,
+ * it initiates the authorization process. If a refresh token exists, it checks
+ * if the access token is expired and refreshes it if necessary. Once a valid
+ * access token is obtained, it can be used for Google Drive operations.
+ */
 void MainWindow::ensureValidGoogleToken()
 {
     auto& config = AppConfig::getInstance();
@@ -808,6 +665,14 @@ void MainWindow::ensureValidGoogleToken()
         refreshToken);
 }
 
+/**
+ * @brief Starts the process of backing up the database to Google Drive.
+ *
+ * This method checks if the vault is unlocked and if a valid Google access token
+ * is available. If the access token is expired or missing, it initiates the
+ * authorization or refresh process. Once a valid token is obtained, it triggers
+ * the backup operation to Google Drive.
+ */
 void MainWindow::startGoogleDriveBackup()
 {
     qDebug() << "startGoogleDriveBackup called";
@@ -840,18 +705,6 @@ void MainWindow::startGoogleDriveBackup()
     googleAuthInProgress_ = true;
 
     const QString refreshToken = config.getRefreshToken();
-
-    // if (!refreshToken.isEmpty()) {
-    //     tokenClient_.refreshAccessToken(
-    //         config.getGoogleOAuthClientId(),
-    //         config.getGoogleOAuthClientSecret(),
-    //         refreshToken
-    //     );
-    // } else {
-    //     oauthManager_.startAuthorization(
-    //         config.getGoogleOAuthClientId()
-    //     );
-    // }
 
     if (!refreshToken.isEmpty())
     {

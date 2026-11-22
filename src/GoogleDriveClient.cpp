@@ -14,6 +14,14 @@
 #include <QUuid>
 #include <QDir>
 
+/**
+ * @brief Helper functions and constants for Google Drive API interactions.
+ *
+ * This namespace contains utility functions and constants used by the GoogleDriveClient
+ * class to interact with the Google Drive API, including URL construction, request
+ * authorization, and error handling.
+ */
+
 namespace
 {
     constexpr auto DRIVE_API =
@@ -28,6 +36,16 @@ namespace
     constexpr auto FOLDER_MIME_TYPE =
         "application/vnd.google-apps.folder";
 
+    /**
+     * @brief Creates an authorized QNetworkRequest for Google Drive API.
+     *
+     * @param url The URL for the request.
+     * @param accessToken The OAuth 2.0 access token for authorization.
+     * @return A QNetworkRequest object with the Authorization header set.
+     *
+     * This function constructs a QNetworkRequest for the specified URL and adds
+     * the necessary Authorization header using the provided access token.
+     */
     QNetworkRequest authorizedRequest(
         const QUrl& url,
         const QString& accessToken)
@@ -41,6 +59,16 @@ namespace
         return request;
     }
 
+    /**
+     * @brief Extracts an error message from a QNetworkReply.
+     *
+     * @param reply The QNetworkReply object containing the response.
+     * @return A QString containing the extracted error message.
+     *
+     * This function reads the response body from the QNetworkReply and attempts
+     * to parse it as JSON to extract a meaningful error message. If no specific
+     * message is found, it returns the default error string from the reply.
+     */
     QString replyError(QNetworkReply* reply)
     {
         const QByteArray body = reply->readAll();
@@ -66,6 +94,16 @@ namespace
         return reply->errorString();
     }
 
+    /**
+     * @brief Constructs a QUrl for querying files in Google Drive.
+     *
+     * @param searchQuery The query string to filter files.
+     * @return A QUrl object representing the constructed URL.
+     *
+     * This function builds a QUrl for the Google Drive API's files endpoint,
+     * including the specified search query and necessary query parameters
+     * to retrieve file metadata.
+     */
     QUrl filesUrl(const QString& searchQuery)
     {
         QUrl url(QString(DRIVE_API) + "/files");
@@ -80,6 +118,16 @@ namespace
         return url;
     }
 
+    /**
+     * @brief Escapes special characters in a Google Drive query string.
+     *
+     * @param value The input string to be escaped.
+     * @return A QString with special characters escaped for use in a query.
+     *
+     * This function replaces backslashes and single quotes in the input string
+     * with their escaped counterparts, ensuring that the string can be safely
+     * used in a Google Drive API query.
+     */
     QString escapeDriveQuery(const QString& value)
     {
         QString result = value;
@@ -88,6 +136,16 @@ namespace
         return result;
     }
 
+    /**
+     * @brief Checks if the specified file path points to a valid SQLite database.
+     *
+     * @param path The file path to check.
+     * @return True if the file is a valid SQLite database; otherwise, false.
+     *
+     * This function attempts to open the specified file as a read-only SQLite database
+     * and performs a quick integrity check. It returns true if the database is valid,
+     * and false otherwise.
+     */
     bool isValidSqliteDatabase(const QString& path)
     {
         sqlite3* database = nullptr;
@@ -136,11 +194,24 @@ namespace
     }
 }
 
+/**
+ * @brief Constructs a GoogleDriveClient with an optional parent QObject.
+ * @param parent The parent QObject, default is nullptr.
+ *
+ * This constructor initializes the GoogleDriveClient, setting up the necessary
+ * network access manager for handling HTTP requests to Google Drive.
+ */
 GoogleDriveClient::GoogleDriveClient(QObject* parent)
     : QObject(parent)
 {
 }
 
+/**
+ * @brief Creates a snapshot of the database.
+ * @param sourceDatabase The source SQLite database.
+ * @param errorMessage Reference to a string to store any error messages.
+ * @return The path to the created snapshot file.
+ */
 QString GoogleDriveClient::createDatabaseSnapshot(
     sqlite3* sourceDatabase,
     QString& errorMessage)
@@ -232,6 +303,14 @@ QString GoogleDriveClient::createDatabaseSnapshot(
     return path;
 }
 
+
+/**
+ * @brief Cleans up the temporary database snapshot file.
+ *
+ * This method checks if a temporary snapshot file exists and removes it from
+ * the filesystem. It also clears the internal snapshot path to indicate that
+ * there is no active snapshot.
+ */
 void GoogleDriveClient::backupDatabase(
     sqlite3* sourceDatabase,
     const QString& accessToken)
@@ -259,6 +338,7 @@ void GoogleDriveClient::backupDatabase(
 
     findBackupFolder();
 }
+
 
 void GoogleDriveClient::findBackupFolder()
 {
@@ -303,6 +383,13 @@ void GoogleDriveClient::findBackupFolder()
     });
 }
 
+/**
+ * @brief Creates a backup folder in Google Drive if it doesn't exist.
+ *
+ * This method sends a request to the Google Drive API to create a new folder
+ * named "PasswordManager" with the appropriate MIME type. Upon successful creation,
+ * it retrieves the folder ID and proceeds to find or create the backup file.
+ */
 void GoogleDriveClient::createBackupFolder()
 {
     QUrl url(QString(DRIVE_API) + "/files");
@@ -355,6 +442,14 @@ void GoogleDriveClient::createBackupFolder()
     });
 }
 
+/**
+ * @brief Finds the backup file in the specified Google Drive folder.
+ *
+ * This method queries Google Drive for a file with the name "PasswordManagerBackup.db"
+ * in the folder identified by folderId_. If the file exists, its ID is stored in
+ * backupFileId_. If it does not exist, backupFileId_ is cleared. The method then
+ * proceeds to upload the database snapshot.
+ */
 void GoogleDriveClient::findBackupFile()
 {
     const QString query =
@@ -398,6 +493,14 @@ void GoogleDriveClient::findBackupFile()
     });
 }
 
+/**
+ * @brief Uploads the database snapshot to Google Drive.
+ *
+ * This method checks if a backup file already exists in the specified folder.
+ * If it does, it replaces the contents of the existing file. If not, it creates
+ * a new backup file. The method handles both scenarios and emits a signal upon
+ * completion, indicating success or failure.
+ */
 void GoogleDriveClient::uploadBackup()
 {
     QFile file(snapshotPath_);
@@ -508,6 +611,11 @@ void GoogleDriveClient::uploadBackup()
     });
 }
 
+/**
+ * @brief Downloads the existing backup to a temporary local file.
+ * The caller is responsible for safely installing the restored database.
+ * @param accessToken The OAuth 2.0 access token for authorization.
+ */
 void GoogleDriveClient::downloadBackup(
     const QString& accessToken)
 {
@@ -600,6 +708,11 @@ void GoogleDriveClient::downloadBackup(
     });
 }
 
+/**
+ * @brief Downloads the existing backup to a temporary local file.
+ * The caller is responsible for safely installing the restored database.
+ * @param accessToken The OAuth 2.0 access token for authorization.
+ */
 void GoogleDriveClient::downloadBackupFile()
 {
     QUrl url(
@@ -672,6 +785,14 @@ void GoogleDriveClient::downloadBackupFile()
     });
 }
 
+
+/**
+ * @brief Cleans up the temporary database snapshot file.
+ *
+ * This method checks if a temporary snapshot file exists and removes it from
+ * the filesystem. It also clears the internal snapshot path to indicate that
+ * there is no active snapshot.
+ */
 void GoogleDriveClient::cleanupSnapshot()
 {
     if (!snapshotPath_.isEmpty()) {

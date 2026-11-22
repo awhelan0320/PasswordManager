@@ -5,6 +5,7 @@
 
 #include "PkceHelper.h"
 
+
 class OAuthManager : public QObject
 {
     Q_OBJECT

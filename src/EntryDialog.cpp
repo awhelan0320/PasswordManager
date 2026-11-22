@@ -6,6 +6,10 @@
 #include <QTextEdit>
 #include <QVBoxLayout>
 
+/**
+ * @brief Constructs an EntryDialog with an optional parent widget.
+ * @param parent The parent widget, default is nullptr.
+ */
 EntryDialog::EntryDialog(QWidget* parent)
     : QDialog(parent)
 {
@@ -55,6 +59,11 @@ EntryDialog::EntryDialog(QWidget* parent)
     resize(450, 300);
 }
 
+/**
+ * @brief Constructs an EntryDialog for editing an existing VaultEntry.
+ * @param entry The VaultEntry to be edited.
+ * @param parent The parent widget, default is nullptr.
+ */
 EntryDialog::EntryDialog(
     const VaultEntry& entry,
     QWidget* parent)
@@ -81,6 +90,10 @@ EntryDialog::EntryDialog(
     );
 }
 
+/**
+ * @brief Retrieves the VaultEntry created or edited in the dialog.
+ * @return The VaultEntry object containing the entered data.
+ */
 VaultEntry EntryDialog::entry() const
 {
     VaultEntry entry;
