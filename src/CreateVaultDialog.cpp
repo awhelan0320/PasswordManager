@@ -8,6 +8,16 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
+/**
+ * @brief Constructs a CreateVaultDialog with the specified vault and parent widget.
+ *
+ * @param vault The vault object to be created.
+ * @param parent The parent widget of the dialog (default is nullptr).
+ *
+ * This constructor initializes the dialog with the provided vault reference and
+ * sets up the user interface elements for password input, confirmation, and
+ * action buttons.
+ */
 CreateVaultDialog::CreateVaultDialog(
     Vault& vault,
     QWidget* parent
@@ -79,6 +89,13 @@ CreateVaultDialog::CreateVaultDialog(
     passwordEdit_->setFocus();
 }
 
+/**
+ * @brief Handles the creation of the vault when the create button is clicked.
+ *
+ * This method retrieves the password and confirmation from the input fields,
+ * validates them, and attempts to create the vault. If validation fails, it
+ * displays an error message. If successful, it accepts the dialog.
+ */
 void CreateVaultDialog::handleCreate()
 {
     qDebug() << "Create Vault button handler entered";
@@ -109,6 +126,11 @@ void CreateVaultDialog::handleCreate()
     qDebug() << "Create Vault dialog accepted.";
 }
 
+/**
+ * @brief Handles the cancellation of the vault creation when the cancel button is clicked.
+ *
+ * This method rejects the dialog, effectively canceling the vault creation process.
+ */
 void CreateVaultDialog::handleCancel()
 {
     reject();

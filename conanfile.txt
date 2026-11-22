@@ -3,6 +3,7 @@ gtest/1.17.0
 qt/6.7.3
 sqlite3/3.53.3
 libsodium/1.0.22
+brotli/1.1.1
 
 [generators]
 CMakeDeps
